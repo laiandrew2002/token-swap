@@ -1,10 +1,10 @@
 "use client"
 
+import { useState, useRef } from "react"
 import { Input } from "@/components/ui/input"
 import { parseNumericInput } from "@/lib/utils/format"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useState, useRef, useEffect } from "react"
 
 interface TokenInputProps {
   value: string
@@ -36,9 +36,11 @@ export function TokenInput({
 
   return (
     <div className="space-y-2">
-      <label htmlFor="usd-input" className="text-sm font-medium">
-        {label}
-      </label>
+      <div className="mb-3">
+        <label htmlFor="usd-input" className="text-sm font-medium text-muted-foreground">
+          {label}
+        </label>
+      </div>
       <div className="relative">
         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
           $
@@ -54,7 +56,7 @@ export function TokenInput({
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
           className={`pl-8 pr-10 ${
-            isFocused ? "ring-2 ring-ring ring-offset-2" : ""
+            isFocused ? "ring-1 ring-primary ring-offset-2" : ""
           } ${error ? "border-destructive" : ""}`}
         />
         {value && (

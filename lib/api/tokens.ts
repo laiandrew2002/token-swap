@@ -25,7 +25,7 @@ export async function getTokenInfo({
     if (!API_KEY) {
       return {
         token: null,
-        error: "API key not configured. Please set NEXT_PUBLIC_FUNKIT_API_KEY",
+        error: "API key not configured",
       }
     }
 
@@ -62,13 +62,4 @@ export async function getTokenInfo({
   }
 }
 
-/**
- * Fetch multiple token infos in parallel
- */
-export async function getMultipleTokenInfos(
-  params: GetTokenInfoParams[]
-): Promise<GetTokenInfoResult[]> {
-  const promises = params.map((param) => getTokenInfo(param))
-  return Promise.all(promises)
-}
 

@@ -39,10 +39,10 @@ export function TokenSelector({
     return matchesSearch && notExcluded
   })
 
-  // Reset highlighted index when search changes
-  useEffect(() => {
+  // Reset highlighted index when search changes, only if not already 0
+  if (highlightedIndex !== 0 && searchQuery !== "") {
     setHighlightedIndex(0)
-  }, [searchQuery])
+  }
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -133,9 +133,19 @@ export function TokenSelector({
         <div className="flex items-center gap-3 flex-1 min-w-0">
           {selectedToken ? (
             <>
-              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
-                {selectedToken.symbol.charAt(0)}
-              </div>
+              {selectedToken.icon ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={selectedToken.icon}
+                  alt={selectedToken.symbol}
+                  className="shrink-0 w-8 h-8 rounded-full bg-primary/10 object-contain"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
+                  {selectedToken.symbol.charAt(0)}
+                </div>
+              )}
               <div className="flex-1 min-w-0 text-left">
                 <div className="font-medium truncate">{selectedToken.symbol}</div>
                 <div className="text-xs text-muted-foreground truncate">
@@ -143,7 +153,7 @@ export function TokenSelector({
                 </div>
               </div>
               {selectedChainInfo && (
-                <div className="flex-shrink-0 px-2 py-1 text-xs bg-secondary rounded">
+                <div className="shrink-0 px-2 py-1 text-xs bg-secondary rounded">
                   {selectedChainInfo.shortName}
                 </div>
               )}
@@ -154,7 +164,7 @@ export function TokenSelector({
         </div>
         <ChevronDown
           className={cn(
-            "h-4 w-4 flex-shrink-0 transition-transform",
+            "h-4 w-4 shrink-0 transition-transform",
             isOpen && "rotate-180"
           )}
         />
@@ -222,9 +232,19 @@ export function TokenSelector({
                         role="option"
                         aria-selected={isHighlighted}
                       >
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
-                          {token.symbol.charAt(0)}
-                        </div>
+                        {token.icon ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={token.icon}
+                            alt={token.symbol}
+                            className="shrink-0 w-8 h-8 rounded-full bg-primary/10 object-contain"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
+                            {token.symbol.charAt(0)}
+                          </div>
+                        )}
                         <div className="flex-1 min-w-0">
                           <div className="font-medium truncate">
                             {token.symbol}
@@ -234,7 +254,7 @@ export function TokenSelector({
                           </div>
                         </div>
                         {chainInfo && (
-                          <div className="flex-shrink-0 px-2 py-1 text-xs bg-secondary rounded">
+                          <div className="shrink-0 px-2 py-1 text-xs bg-secondary rounded">
                             {chainInfo.shortName}
                           </div>
                         )}

@@ -28,6 +28,7 @@ export const SUPPORTED_TOKENS: Token[] = [
     address: "", // Will be fetched from API
     name: "USD Coin",
     decimals: 6,
+    icon: "/assets/usdc.svg",
   },
   {
     symbol: "USDT",
@@ -35,6 +36,7 @@ export const SUPPORTED_TOKENS: Token[] = [
     address: "", // Will be fetched from API
     name: "Tether USD",
     decimals: 6,
+    icon: "/assets/usdt.svg",
   },
   {
     symbol: "ETH",
@@ -42,6 +44,7 @@ export const SUPPORTED_TOKENS: Token[] = [
     address: "", // Will be fetched from API
     name: "Ethereum",
     decimals: 18,
+    icon: "/assets/eth.svg",
   },
   {
     symbol: "WBTC",
@@ -49,6 +52,7 @@ export const SUPPORTED_TOKENS: Token[] = [
     address: "", // Will be fetched from API
     name: "Wrapped Bitcoin",
     decimals: 8,
+    icon: "/assets/btc.svg",
   },
 ]
 

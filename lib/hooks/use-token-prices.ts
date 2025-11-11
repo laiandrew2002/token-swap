@@ -10,6 +10,7 @@ export interface UseTokenPricesParams {
 export interface TokenPrices {
   sourcePrice: number | null
   targetPrice: number | null
+  rate: number | null
   sourceError: string | null
   targetError: string | null
   isLoading: boolean
@@ -60,10 +61,15 @@ export function useTokenPrices({
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     refetchInterval: 30 * 1000, // Refetch every 30 seconds
   })
+  let rate: number | null = null
+  if (sourceQuery.data?.price && targetQuery.data?.price) {
+    rate = sourceQuery.data?.price / targetQuery.data?.price
+  }
 
   return {
     sourcePrice: sourceQuery.data?.price ?? null,
     targetPrice: targetQuery.data?.price ?? null,
+    rate,
     sourceError: sourceQuery.data?.error ?? null,
     targetError: targetQuery.data?.error ?? null,
     isLoading: sourceQuery.isLoading || targetQuery.isLoading,

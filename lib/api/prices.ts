@@ -13,10 +13,6 @@ export interface GetPriceResult {
   error: string | null
 }
 
-/**
- * Fetch token price by chain ID and token address
- * Wrapper around @funkit/api-base getAssetPriceInfo
- */
 export async function getTokenPrice({
   chainId,
   assetTokenAddress,
@@ -25,7 +21,7 @@ export async function getTokenPrice({
     if (!API_KEY) {
       return {
         price: null,
-        error: "API key not configured. Please set NEXT_PUBLIC_FUNKIT_API_KEY",
+        error: "API key not configured",
       }
     }
 
@@ -41,7 +37,6 @@ export async function getTokenPrice({
       assetTokenAddress,
       apiKey: API_KEY,
     })
-    console.log("result", result)
 
     if (!result) {
       return {
@@ -77,13 +72,4 @@ export async function getTokenPrice({
   }
 }
 
-/**
- * Fetch multiple prices in parallel
- */
-export async function getMultiplePrices(
-  params: GetPriceParams[]
-): Promise<GetPriceResult[]> {
-  const promises = params.map((param) => getTokenPrice(param))
-  return Promise.all(promises)
-}
 
