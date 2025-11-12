@@ -141,7 +141,7 @@ export function TokenAmountInput({
         {/* USD Amount Display */}
         <div className="w-full sm:w-auto sm:shrink-0 sm:max-w-[180px]">
           {isLoading ? (
-            <Skeleton className="h-12 w-full sm:w-32" />
+            <Skeleton className="h-12 w-full sm:w-40" />
           ) : (
             <div
               className={cn(

@@ -99,7 +99,7 @@ export function formatUSDAmount(value: number | string): string {
     return `${sign}${millions.toFixed(2)}M`
   }
 
-  return sign + numValue.toFixed(2)
+  return sign + absValue.toFixed(2)
 }
 
 /**

@@ -39,14 +39,14 @@ function categorizeError(errorMessage: string | null): ErrorType {
     return ErrorType.NETWORK_ERROR
   }
 
+  // Price not found (check before token not found to avoid false positives)
+  if (lowerError.includes("price") && lowerError.includes("not found")) {
+    return ErrorType.PRICE_NOT_FOUND
+  }
+
   // Token not found
   if (lowerError.includes("token") && (lowerError.includes("not found") || lowerError.includes("not found on chain"))) {
     return ErrorType.TOKEN_NOT_FOUND
-  }
-
-  // Price not found
-  if (lowerError.includes("price") && lowerError.includes("not found")) {
-    return ErrorType.PRICE_NOT_FOUND
   }
 
   // Rate limiting
