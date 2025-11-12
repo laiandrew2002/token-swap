@@ -2,17 +2,36 @@
 
 A modern, production-ready web application for calculating token swap amounts across multiple blockchain networks. Built with Next.js and React, this application provides real-time token price data and instant conversion calculations with an intuitive, responsive user interface.
 
+🌐 **Live Demo**: [https://token-swap-kappa.vercel.app/](https://token-swap-kappa.vercel.app/)
+
+## 📸 Screenshots
+
+### Application Interface
+
+![Token Swap Calculator Interface](./docs/screenshot-app.png)
+
+*The main swap interface showing the bidirectional editable inputs with token amounts and USD values side by side.*
+
+### Performance Metrics
+
+![Lighthouse Score](./docs/screenshot-lighthouse.png)
+
+*Lighthouse performance audit showing optimized load times, accessibility, and best practices scores.*
+
 ## ✨ Features
 
+- **Bidirectional Editable Inputs**: Edit either token amount or USD value - both update in real-time
 - **Real-time Token Pricing**: Live token prices fetched from the Funkit API
 - **Multi-Chain Support**: Swap calculations across Ethereum, Polygon, and Base networks
 - **Intuitive Token Selection**: Search-enabled dropdown selectors with keyboard navigation
 - **Instant Calculations**: Real-time conversion calculations as you type
+- **Smart Number Formatting**: Large USD amounts automatically abbreviated (M, B, T)
+- **Professional Error Handling**: User-friendly error messages with intelligent retry logic
 - **Smooth User Experience**: 
   - Loading skeletons that prevent layout shift
   - Comprehensive error handling with retry functionality
   - Subtle animations and transitions
-  - Responsive design for mobile and desktop
+  - Responsive design for mobile and desktop (stacks vertically on mobile)
 - **Type Safety**: Full TypeScript coverage for enhanced reliability
 - **Exchange Rate Display**: Real-time conversion rates between selected tokens
 
@@ -92,39 +111,89 @@ npm start
 
 ## 📖 Usage
 
-1. **Enter USD Amount**: Type the USD amount you want to swap in the input field at the top
-2. **Select Source Token**: Choose the token you want to swap from using the "From" dropdown
-3. **Select Target Token**: Choose the token you want to swap to using the "To" dropdown
-4. **View Results**: The application automatically calculates and displays:
-   - The equivalent amount in the source token
-   - The equivalent amount in the target token
-   - The current exchange rate between the two tokens
+1. **Select Tokens**: Choose the source token (Sell) and target token (Buy) from the dropdowns
+2. **Enter Amount**: You can edit either:
+   - **Token Amount**: Type the amount of tokens you want to swap
+   - **USD Amount**: Type the USD value (shown beside the token amount)
+3. **Automatic Conversion**: As you type in either field, the other field updates automatically
+4. **View Exchange Rate**: The current exchange rate is displayed between the two sections
 
 ### Additional Features
 
-- **Flip Tokens**: Click the circular arrow button between token selectors to quickly swap source and target tokens
-- **Retry on Error**: If an API call fails, click the "Retry" button to attempt the request again
+- **Flip Tokens**: Click the circular arrow button between sections to quickly swap source and target tokens
+- **Clear Input**: Click the X button in the USD field to clear both amounts
+- **Smart Formatting**: Large USD amounts are automatically abbreviated (e.g., 1.5M for $1,500,000)
+- **Retry on Error**: If an API call fails, click "Try Again" for retryable errors
 - **Real-time Updates**: Token prices automatically refresh every 30 seconds
+- **Responsive Design**: On mobile, inputs stack vertically for better usability
 
-## 🧪 Testing
+## 🧪 Testing & Quality Assurance
 
-### Run Tests
+This project includes comprehensive testing with a focus on component testing and utility function coverage.
+
+### Test Structure
+
+- **Component Tests** (`tests/components/`): React Testing Library tests for UI components
+  - `token-amount-input.test.tsx`: Tests for bidirectional input handling, error states, clear functionality, and user interactions
+- **Utility Tests** (`tests/utils/`): Unit tests for business logic
+  - `calculations.test.ts`: Tests for swap calculations, token amount calculations, and input validation
+  - `format.test.ts`: Tests for number formatting, USD abbreviation (M, B, T), and input parsing
+  - `errors.test.ts`: Tests for error categorization and user-friendly error message mapping
+
+### Running Tests
 
 ```bash
+# Run all tests
 npm test
-```
 
-### Watch Mode
-
-```bash
+# Watch mode for development
 npm run test:watch
-```
 
-### Coverage Report
-
-```bash
+# Generate coverage report
 npm run test:coverage
 ```
+
+### Test Coverage
+
+The test suite covers:
+- ✅ Component rendering and user interactions
+- ✅ Bidirectional input conversion (token amount ↔ USD)
+- ✅ Input validation and error handling
+- ✅ Calculation logic with edge cases
+- ✅ User event simulation (typing, clicking)
+- ✅ Error state display and retry functionality
+- ✅ Number formatting and abbreviation logic
+- ✅ Error categorization and user-friendly messages
+
+### Example Test
+
+```typescript
+// Component test example from token-amount-input.test.tsx
+it('calls onTokenAmountChange when token amount is typed', async () => {
+  const handleChange = jest.fn()
+  render(<TokenAmountInput onTokenAmountChange={handleChange} token={mockToken} />)
+  
+  const input = container.querySelector('input[placeholder="0.00"]')
+  await userEvent.type(input, '123')
+  
+  expect(handleChange).toHaveBeenCalled()
+})
+```
+
+### Performance Testing
+
+Run Lighthouse audit on the deployed application:
+
+```bash
+# Using Lighthouse CLI
+npx lighthouse https://token-swap-kappa.vercel.app/ --view
+```
+
+The application is optimized for:
+- Fast initial load times
+- Smooth interactions with memoization
+- Efficient API caching with TanStack Query
+- Code splitting for optimal bundle sizes
 
 ## 📦 Supported Tokens
 
@@ -136,6 +205,11 @@ The application currently supports the following token-chain pairs:
 | USDT  | Polygon | 137 |
 | ETH   | Base | 8453 |
 | WBTC  | Ethereum | 1 |
+| UNI   | Uniswap | 1 |
+| LINK  | Chainlink | 1 |
+| AAVE  | Aave | 1 |
+| MATIC | Polygon | 1 |
+| SUSHI | SushiSwap | 1 |
 
 > **Note**: The token list can be easily extended by modifying `lib/config/tokens.ts`.
 
@@ -157,10 +231,10 @@ token-swap/
 │   │   └── skeleton.tsx
 │   ├── providers/           # Context providers
 │   │   └── query-provider.tsx
-│   ├── loading-skeleton.tsx # Loading state component
+│   ├── token-amount-input.tsx # Bidirectional editable input (token + USD)
 │   ├── swap-interface.tsx   # Main swap interface
 │   ├── token-display.tsx    # Token amount display
-│   ├── token-input.tsx      # USD input component
+│   ├── token-input.tsx      # USD input component (legacy)
 │   └── token-selector.tsx   # Token selection dropdown
 ├── lib/                     # Core application logic
 │   ├── api/                 # API integration layer
@@ -173,7 +247,8 @@ token-swap/
 │   │   └── use-token-prices.ts  # Token prices hook
 │   └── utils/               # Utility functions
 │       ├── calculations.ts  # Swap calculation logic
-│       └── format.ts        # Number formatting utilities
+│       ├── format.ts        # Number formatting utilities (including USD abbreviations)
+│       └── errors.ts        # Error handling and user-friendly message mapping
 ├── types/                   # TypeScript type definitions
 │   └── index.ts
 ├── tests/                   # Test files
@@ -206,31 +281,69 @@ The project uses:
 - **TypeScript** for type checking
 - **Prettier** (if configured) for code formatting
 
-## 🎨 Design Philosophy
+## 🎨 Design Philosophy & Product Sense
 
-This application draws design inspiration from leading cryptocurrency platforms:
+This application incorporates specific, well-researched UX patterns from industry-leading cryptocurrency platforms:
 
-- **Matcha.xyz**: Real-time rate updates, integrated search dropdowns, and flip functionality
-- **Coinbase**: Professional color scheme with clear visual hierarchy
-- **Robinhood**: Clean number formatting and subtle interactive animations
+### UX Patterns from Leading Platforms
+
+#### 1. **Matcha.xyz Patterns**
+- **Instant Swap Preview**: Real-time rate updates as users input amounts - no "Calculate" button needed. This reduces friction and provides immediate feedback.
+- **Integrated Search Dropdown**: Token selector with inline search functionality (not a modal) for faster interaction. Users can type to filter tokens without opening a separate dialog.
+- **Flip Button**: Quick swap between source and target tokens with smooth animation. The circular arrow button provides visual feedback and makes token reversal intuitive.
+
+#### 2. **Coinbase Patterns**
+- **Conservative Color Scheme**: Professional grays and blues (#0052ff primary) create a trustworthy, financial-services feel. This color choice builds user confidence.
+- **Clear Visual Hierarchy**: Token amount and USD value positioned side by side with clear labels. Information is scannable and the relationship between values is immediately apparent.
+- **Skeleton Loaders**: Loading states that match the final content shape prevent layout shift and provide smooth loading experience. Users see the structure before content loads.
+
+#### 3. **Robinhood Patterns**
+- **Clean Number Formatting**: Commas and appropriate decimal places (e.g., "1,234.56") make large numbers readable. Formatting adapts based on value size.
+- **Smart Abbreviations**: Large USD amounts automatically abbreviated (1.5M, 1.5B, 1.5T) to keep the interface clean and readable.
+- **Subtle Hover States**: Scale transforms on interactive elements (flip button, clear button) provide tactile feedback without being distracting.
+- **Focus Ring Animations**: Smooth ring animations on input focus create clear visual feedback for keyboard navigation and accessibility.
 
 ### Component Architecture
 
-- **Separation of Concerns**: UI components, business logic, and API calls are clearly separated
-- **Reusability**: Base UI components are built for reuse across the application
-- **Type Safety**: Full TypeScript coverage ensures compile-time error detection
-- **Performance**: Optimized with React Query caching, memoization, and code splitting
+This project follows a **component-driven design** approach:
+
+- **Base UI Components** (`components/ui/`): Reusable, accessible components built on Radix UI primitives
+  - `Button`, `Input`, `Select`, `Card`, `Skeleton`, `Dialog`
+  - Each component is self-contained and follows shadcn/ui patterns
+- **Feature Components** (`components/`): Domain-specific components that compose base components
+  - `TokenAmountInput`: Bidirectional editable inputs with token and USD amounts
+  - `TokenSelector`: Search-enabled token selection dropdown
+  - `SwapInterface`: Main swap interface orchestrating all components
+  - Clear separation of concerns: UI, business logic, and API calls
+- **Custom Hooks** (`lib/hooks/`): TanStack Query hooks for data fetching
+  - Encapsulate API logic and provide clean component interfaces
+- **Utilities** (`lib/utils/`): Pure functions for calculations, formatting, and error handling
+  - Easily testable, no side effects
+
+### State Management Strategy
+
+- **Server State**: TanStack Query handles all API calls with automatic caching, refetching, and error handling
+- **Client State**: React `useState` for UI state (selected tokens, amounts)
+- **No Global State**: Avoided Redux/Zustand as the app is simple enough for local state
+- **Memoization**: `useMemo` for expensive calculations to prevent unnecessary re-renders
+- **Bidirectional Updates**: Smart tracking of which input was last edited to avoid circular updates
 
 ## 🚢 Deployment
 
-### Vercel (Recommended)
+### Live Application
 
-1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
-2. Import your project in [Vercel](https://vercel.com)
-3. Add the environment variable: `NEXT_PUBLIC_FUNKIT_API_KEY`
-4. Deploy!
+The application is deployed and available at:
 
-The application will automatically build and deploy on every push to the main branch.
+**🌐 [https://token-swap-kappa.vercel.app/](https://token-swap-kappa.vercel.app/)**
+
+### Vercel Deployment
+
+The application is deployed on Vercel with the following configuration:
+
+1. **Automatic Deployments**: Every push to the main branch triggers a new deployment
+2. **Environment Variables**: `NEXT_PUBLIC_FUNKIT_API_KEY` is configured in Vercel dashboard
+3. **Build Settings**: Uses Next.js default build configuration
+4. **Performance**: Optimized for fast load times and smooth interactions
 
 ### Manual Deployment
 
@@ -302,9 +415,11 @@ The application uses the Funkit API for token data and pricing:
 
 ### Error Handling
 
-- Network errors are caught and displayed with retry options
-- Invalid API responses are handled gracefully
-- User-friendly error messages are shown inline
+- **Intelligent Error Categorization**: Backend errors are automatically categorized (network, API key, token not found, etc.)
+- **User-Friendly Messages**: Technical errors are mapped to clear, actionable messages
+- **Retry Logic**: Only retryable errors (network, rate limit, etc.) show retry buttons
+- **Professional Display**: Errors shown in styled cards with icons, not raw backend messages
+- **Graceful Degradation**: Invalid API responses are handled gracefully without crashing
 
 ## 🔐 Security Considerations
 
@@ -312,6 +427,66 @@ The application uses the Funkit API for token data and pricing:
 - Client-side API calls use `NEXT_PUBLIC_` prefix for Next.js environment variables
 - Input validation prevents invalid USD amounts
 - TypeScript provides compile-time type safety
+- Error messages are sanitized to prevent exposing sensitive backend details
+
+## 📝 Assumptions & Trade-offs
+
+This section documents key design decisions, their rationale, and the trade-offs involved.
+
+### Assumptions
+
+1. **API Key Required**: Assumes users have access to a Funkit API key. The application gracefully handles missing API keys with clear error messages.
+
+2. **Token Addresses from API**: Token addresses are fetched from the API (not hardcoded) to ensure accuracy and support for tokens that may change addresses.
+
+3. **Price Update Frequency**: Prices refresh every 30 seconds - this balances real-time updates with API rate limits and user experience.
+
+4. **USD as Base Currency**: All calculations use USD as the base currency. This simplifies the UX and aligns with common DeFi patterns.
+
+5. **Client-Side Rendering for Token Data**: Token data is fetched client-side to enable real-time updates. This trade-off means slightly slower initial load but better interactivity.
+
+6. **Bidirectional Input Editing**: Both token amount and USD amount are editable. The last edited field determines the conversion direction to avoid circular updates.
+
+### Trade-offs
+
+1. **Limited Token List**: Hardcoded list of 4 tokens (easily extensible via `lib/config/tokens.ts`).
+   - **Rationale**: Focused scope for MVP, easier to test and maintain
+   - **Trade-off**: Not a comprehensive token list, but architecture supports easy expansion
+
+2. **No Historical Data**: Only shows current prices, not price history or charts.
+   - **Rationale**: Scope focused on swap calculation, not analytics
+   - **Trade-off**: Less context for users, but faster and simpler implementation
+
+3. **Client-Side Only**: No server-side rendering for token data.
+   - **Rationale**: Real-time updates require client-side fetching, simpler deployment
+   - **Trade-off**: Slightly slower initial load, but better for dynamic content
+
+4. **No Actual Swap Execution**: This is a calculator/preview tool, not a swap executor.
+   - **Rationale**: Scope focused on calculation and UX, not wallet integration
+   - **Trade-off**: Users can't execute swaps, but tool is safer and simpler
+
+5. **30-Second Price Refresh**: Prices update every 30 seconds, not on every keystroke.
+   - **Rationale**: Balances real-time feel with API rate limits and performance
+   - **Trade-off**: Prices may be slightly stale, but reduces API calls and improves performance
+
+6. **Abbreviated Formatting Threshold**: USD amounts >= 1 million are abbreviated (no thousands abbreviation).
+   - **Rationale**: Keeps interface clean, most swap amounts are in thousands or millions
+   - **Trade-off**: Very large amounts (999M+) might be less precise, but improves readability
+
+7. **Error Message Genericization**: Backend errors are mapped to user-friendly messages.
+   - **Rationale**: Better UX, prevents exposing technical details
+   - **Trade-off**: Less debugging information for developers, but clearer for end users
+
+### Future Enhancements
+
+If this were to be extended, potential improvements could include:
+- Expanded token list with search/filter
+- Price history charts
+- Server-side rendering for initial token data
+- Wallet integration for actual swap execution
+- More granular price refresh options
+- Dark mode support
+- Internationalization (i18n)
 
 ## 📄 License
 

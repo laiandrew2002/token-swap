@@ -1,5 +1,4 @@
 import { getAssetPriceInfo } from "@funkit/api-base"
-import { PriceInfo } from "@/types"
 
 const API_KEY = process.env.NEXT_PUBLIC_FUNKIT_API_KEY || ""
 
