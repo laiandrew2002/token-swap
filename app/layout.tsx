@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Token Swap Interface",
-  description: "Explore potential token swaps with real-time pricing",
+  title: "Token Swap Calculator",
+  description: "Calculate potential token swaps with real-time pricing",
 };
 
 export default function RootLayout({
