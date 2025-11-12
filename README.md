@@ -419,7 +419,6 @@ The application uses the Funkit API for token data and pricing:
 - **User-Friendly Messages**: Technical errors are mapped to clear, actionable messages
 - **Retry Logic**: Only retryable errors (network, rate limit, etc.) show retry buttons
 - **Professional Display**: Errors shown in styled cards with icons, not raw backend messages
-- **Graceful Degradation**: Invalid API responses are handled gracefully without crashing
 
 ## 🔐 Security Considerations
 
