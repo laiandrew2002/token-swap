@@ -7,7 +7,7 @@ import { TokenSelector } from "@/components/token-selector"
 import { TokenDisplay } from "@/components/token-display"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ArrowLeftRight, TrendingUp } from "lucide-react"
+import { ArrowUpDown, TrendingUp } from "lucide-react"
 import { useTokenInfo } from "@/lib/hooks/use-token-info"
 import { useTokenPrices } from "@/lib/hooks/use-token-prices"
 import { calculateSwapAmounts } from "@/lib/utils/calculations"
@@ -176,7 +176,7 @@ export function SwapInterface() {
                   aria-label="Flip tokens"
                   disabled={!sourceToken || !targetToken}
                 >
-                  <ArrowLeftRight className="h-5 w-5" />
+                  <ArrowUpDown className="h-5 w-5" />
                 </Button>
               </motion.div>
             </div>

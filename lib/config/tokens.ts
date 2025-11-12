@@ -54,6 +54,38 @@ export const SUPPORTED_TOKENS: Token[] = [
     decimals: 8,
     icon: "/assets/btc.svg",
   },
+  {
+    symbol: "MATIC",
+    chainId: "137",
+    address: "", // Will be fetched from API
+    name: "Polygon",
+    decimals: 18,
+    icon: "/assets/matic.svg",
+  },
+  {
+    symbol: "UNI",
+    chainId: "1",
+    address: "", // Will be fetched from API
+    name: "Uniswap",
+    decimals: 18,
+    icon: "/assets/uni.svg",
+  },
+  {
+    symbol: "LINK",
+    chainId: "1",
+    address: "", // Will be fetched from API
+    name: "Chainlink",
+    decimals: 18,
+    icon: "/assets/link.svg",
+  },
+  {
+    symbol: "AAVE",
+    chainId: "1",
+    address: "", // Will be fetched from API
+    name: "Aave",
+    decimals: 18,
+    icon: "/assets/aave.svg",
+  },
 ]
 
 // Helper function to get chain info

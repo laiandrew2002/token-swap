@@ -1,45 +1,71 @@
-# Token Swap Interface
+# Token Swap Calculator
 
-A modern, production-ready token swap calculator built with Next.js, React 19, TypeScript, and TanStack Query. This application allows users to explore potential token swaps by selecting two tokens and inputting a USD amount to see equivalent amounts in both tokens.
+A modern, production-ready web application for calculating token swap amounts across multiple blockchain networks. Built with Next.js and React, this application provides real-time token price data and instant conversion calculations with an intuitive, responsive user interface.
 
-## 🚀 Features
+## ✨ Features
 
-- **Real-time Token Pricing**: Fetches live token prices using the Funkit API
-- **Intuitive Token Selection**: Search-enabled dropdown with keyboard navigation
+- **Real-time Token Pricing**: Live token prices fetched from the Funkit API
+- **Multi-Chain Support**: Swap calculations across Ethereum, Polygon, and Base networks
+- **Intuitive Token Selection**: Search-enabled dropdown selectors with keyboard navigation
 - **Instant Calculations**: Real-time conversion calculations as you type
-- **Smooth UX**: Loading skeletons, error states with retry, and subtle animations
-- **Responsive Design**: Works seamlessly on mobile and desktop
-- **Type-Safe**: Full TypeScript coverage for reliability
+- **Smooth User Experience**: 
+  - Loading skeletons that prevent layout shift
+  - Comprehensive error handling with retry functionality
+  - Subtle animations and transitions
+  - Responsive design for mobile and desktop
+- **Type Safety**: Full TypeScript coverage for enhanced reliability
+- **Exchange Rate Display**: Real-time conversion rates between selected tokens
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 16 (App Router)
-- **React**: 19.2.0
-- **TypeScript**: Full type safety
-- **State Management**: TanStack Query (React Query) for server state
-- **UI Components**: shadcn/ui with custom theme
-- **Styling**: Tailwind CSS v4
-- **Animations**: Framer Motion
-- **API**: @funkit/api-base for token data and pricing
-- **Testing**: Jest + React Testing Library
+### Core Framework
+- **Next.js 16** - React framework with App Router
+- **React 19.2.0** - UI library
+- **TypeScript 5** - Type-safe development
+
+### State Management & Data Fetching
+- **TanStack Query (React Query) 5** - Server state management with caching and refetching
+- **TanStack Query DevTools** - Development debugging tools
+
+### UI & Styling
+- **Tailwind CSS 4** - Utility-first CSS framework
+- **shadcn/ui** - Accessible component library
+- **Framer Motion** - Animation library
+- **Radix UI** - Unstyled, accessible component primitives
+- **Lucide React** - Icon library
+
+### API Integration
+- **@funkit/api-base** - Token data and pricing API
+
+### Testing
+- **Jest** - JavaScript testing framework
+- **React Testing Library** - React component testing utilities
+- **Testing Library User Event** - User interaction simulation
 
 ## 📋 Prerequisites
 
-- Node.js 18+ (or 20+ recommended)
-- npm or yarn
-- Funkit API key ([Get one here](https://funkit.ai))
+Before you begin, ensure you have the following installed:
 
-## 🏃 Getting Started
+- **Node.js** 18+ (20+ recommended)
+- **npm** or **yarn** package manager
+- **Funkit API Key** - [Get one here](https://funkit.ai)
 
-### 1. Clone and Install
+## 🚀 Getting Started
+
+### 1. Clone the Repository
 
 ```bash
 git clone <repository-url>
 cd token-swap
+```
+
+### 2. Install Dependencies
+
+```bash
 npm install
 ```
 
-### 2. Environment Setup
+### 3. Environment Configuration
 
 Create a `.env.local` file in the root directory:
 
@@ -47,36 +73,54 @@ Create a `.env.local` file in the root directory:
 NEXT_PUBLIC_FUNKIT_API_KEY=your-api-key-here
 ```
 
-### 3. Run Development Server
+> **Note**: Replace `your-api-key-here` with your actual Funkit API key.
+
+### 4. Run the Development Server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-### 4. Build for Production
+### 5. Build for Production
 
 ```bash
 npm run build
 npm start
 ```
 
+## 📖 Usage
+
+1. **Enter USD Amount**: Type the USD amount you want to swap in the input field at the top
+2. **Select Source Token**: Choose the token you want to swap from using the "From" dropdown
+3. **Select Target Token**: Choose the token you want to swap to using the "To" dropdown
+4. **View Results**: The application automatically calculates and displays:
+   - The equivalent amount in the source token
+   - The equivalent amount in the target token
+   - The current exchange rate between the two tokens
+
+### Additional Features
+
+- **Flip Tokens**: Click the circular arrow button between token selectors to quickly swap source and target tokens
+- **Retry on Error**: If an API call fails, click the "Retry" button to attempt the request again
+- **Real-time Updates**: Token prices automatically refresh every 30 seconds
+
 ## 🧪 Testing
 
-Run tests:
+### Run Tests
 
 ```bash
 npm test
 ```
 
-Watch mode:
+### Watch Mode
 
 ```bash
 npm run test:watch
 ```
 
-Coverage report:
+### Coverage Report
 
 ```bash
 npm run test:coverage
@@ -86,167 +130,188 @@ npm run test:coverage
 
 The application currently supports the following token-chain pairs:
 
-- **USDC** on Ethereum (Chain ID: 1)
-- **USDT** on Polygon (Chain ID: 137)
-- **ETH** on Base (Chain ID: 8453)
-- **WBTC** on Ethereum (Chain ID: 1)
+| Token | Chain | Chain ID |
+|-------|-------|----------|
+| USDC  | Ethereum | 1 |
+| USDT  | Polygon | 137 |
+| ETH   | Base | 8453 |
+| WBTC  | Ethereum | 1 |
 
-The token list is easily extensible via `lib/config/tokens.ts`.
+> **Note**: The token list can be easily extended by modifying `lib/config/tokens.ts`.
 
-## 🎨 Design Decisions
+## 🏗️ Project Structure
 
-### UX Patterns Borrowed from Leading Platforms
+```
+token-swap/
+├── app/                      # Next.js App Router
+│   ├── layout.tsx           # Root layout with providers
+│   ├── page.tsx             # Main page component
+│   └── globals.css          # Global styles and Tailwind imports
+├── components/              # React components
+│   ├── ui/                  # Reusable UI components (shadcn/ui)
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── dialog.tsx
+│   │   ├── input.tsx
+│   │   ├── select.tsx
+│   │   └── skeleton.tsx
+│   ├── providers/           # Context providers
+│   │   └── query-provider.tsx
+│   ├── loading-skeleton.tsx # Loading state component
+│   ├── swap-interface.tsx   # Main swap interface
+│   ├── token-display.tsx    # Token amount display
+│   ├── token-input.tsx      # USD input component
+│   └── token-selector.tsx   # Token selection dropdown
+├── lib/                     # Core application logic
+│   ├── api/                 # API integration layer
+│   │   ├── prices.ts        # Price fetching utilities
+│   │   └── tokens.ts        # Token info fetching utilities
+│   ├── config/              # Configuration files
+│   │   └── tokens.ts        # Supported tokens configuration
+│   ├── hooks/               # Custom React hooks
+│   │   ├── use-token-info.ts    # Token metadata hook
+│   │   └── use-token-prices.ts  # Token prices hook
+│   └── utils/               # Utility functions
+│       ├── calculations.ts  # Swap calculation logic
+│       └── format.ts        # Number formatting utilities
+├── types/                   # TypeScript type definitions
+│   └── index.ts
+├── tests/                   # Test files
+│   ├── components/
+│   └── utils/
+├── public/                  # Static assets
+│   └── assets/              # Token icons
+├── next.config.ts           # Next.js configuration
+├── tsconfig.json            # TypeScript configuration
+├── jest.config.js           # Jest configuration
+└── package.json             # Project dependencies
+```
 
-#### From Matcha.xyz
-- **Instant Swap Preview**: Real-time rate updates as users input USD amounts
-- **Token Selector with Search**: Dropdown with integrated search (not a modal) for faster interaction
-- **Flip Button**: Quick swap between source and target tokens with smooth animation
+## 🔧 Development
 
-#### From Coinbase
-- **Conservative Color Scheme**: Grays and blues (#0052ff primary) for a professional, trustworthy feel
-- **Clear Visual Hierarchy**: USD input at top, token amounts displayed below with clear labels
-- **Skeleton Loaders**: Loading states that match the final content shape to prevent layout shift
+### Available Scripts
 
-#### From Robinhood
-- **Clean Number Formatting**: Commas and appropriate decimal places (e.g., "1,234.56")
-- **Subtle Hover States**: Scale transforms on interactive elements (flip button, token selector)
-- **Focus Ring Animations**: Smooth ring animations on input focus for clear feedback
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm test` - Run tests
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:coverage` - Generate test coverage report
+
+### Code Style
+
+The project uses:
+- **ESLint** with Next.js configuration for code linting
+- **TypeScript** for type checking
+- **Prettier** (if configured) for code formatting
+
+## 🎨 Design Philosophy
+
+This application draws design inspiration from leading cryptocurrency platforms:
+
+- **Matcha.xyz**: Real-time rate updates, integrated search dropdowns, and flip functionality
+- **Coinbase**: Professional color scheme with clear visual hierarchy
+- **Robinhood**: Clean number formatting and subtle interactive animations
 
 ### Component Architecture
 
-The application follows a component-driven design:
-
-- **Base UI Components** (`components/ui/`): Reusable shadcn/ui components (Button, Input, Card, Skeleton)
-- **Feature Components** (`components/`): Domain-specific components (TokenSelector, TokenInput, TokenDisplay, SwapInterface)
-- **Custom Hooks** (`lib/hooks/`): TanStack Query hooks for data fetching with proper caching
-- **Utilities** (`lib/utils/`): Pure functions for formatting and calculations
-
-### State Management Strategy
-
-- **Server State**: TanStack Query handles all API calls with automatic caching, refetching, and error handling
-- **Client State**: React useState for UI state (selected tokens, USD input)
-- **No Global State**: Avoided Redux/Zustand as the app is simple enough for local state
-
-### Performance Optimizations
-
-1. **Parallel API Calls**: Source and target token prices fetched simultaneously
-2. **Query Caching**: TanStack Query caches responses (5min for token info, 30s for prices)
-3. **Automatic Refetching**: Prices refresh every 30 seconds for real-time updates
-4. **Memoization**: Expensive calculations memoized where appropriate
-5. **Code Splitting**: Next.js automatically code-splits by route
-
-## 🔧 Key Implementation Details
-
-### API Integration
-
-The app uses `@funkit/api-base` with two main functions:
-
-1. **`getAssetErc20ByChainAndSymbol`**: Fetches token metadata (address, decimals, name)
-2. **`getAssetPriceInfo`**: Fetches current token price by chain ID and token address
-
-Both are wrapped in error-handling utilities (`lib/api/tokens.ts` and `lib/api/prices.ts`).
-
-### Calculation Logic
-
-```
-Source Token Amount = USD Amount / Source Token Price
-Target Token Amount = USD Amount / Target Token Price
-```
-
-Both calculations happen in parallel and update in real-time as the user types.
-
-### Error Handling
-
-- **API Errors**: Displayed inline with retry buttons
-- **Validation Errors**: Real-time validation on USD input (empty, invalid, negative, too large)
-- **Network Errors**: Automatic retry with exponential backoff (configured in TanStack Query)
-
-### Loading States
-
-- **Initial Load**: Skeleton loaders that match content shape (no flash)
-- **Refetching**: Subtle pulse animation on values during background refetch
-- **Token Info Loading**: Disabled state on token selector while fetching address
+- **Separation of Concerns**: UI components, business logic, and API calls are clearly separated
+- **Reusability**: Base UI components are built for reuse across the application
+- **Type Safety**: Full TypeScript coverage ensures compile-time error detection
+- **Performance**: Optimized with React Query caching, memoization, and code splitting
 
 ## 🚢 Deployment
 
 ### Vercel (Recommended)
 
-1. Push your code to GitHub
-2. Import project in [Vercel](https://vercel.com)
-3. Add environment variable: `NEXT_PUBLIC_FUNKIT_API_KEY`
+1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
+2. Import your project in [Vercel](https://vercel.com)
+3. Add the environment variable: `NEXT_PUBLIC_FUNKIT_API_KEY`
 4. Deploy!
 
-The app will automatically build and deploy on every push to main.
+The application will automatically build and deploy on every push to the main branch.
 
-### Manual Build
+### Manual Deployment
 
 ```bash
 npm run build
 npm start
 ```
 
-## 📝 Assumptions & Trade-offs
-
-### Assumptions
-
-1. **API Key Required**: Assumes users have access to a Funkit API key
-2. **Token Addresses**: Token addresses are fetched from the API (not hardcoded) to ensure accuracy
-3. **Price Updates**: Prices refresh every 30 seconds - this balances real-time updates with API rate limits
-4. **USD as Base**: All calculations use USD as the base currency
-
-### Trade-offs
-
-1. **No Token Icons**: Using simple colored circles with first letter instead of fetching token logos (faster, simpler)
-2. **Limited Token List**: Hardcoded list of 4 tokens (easily extensible via config file)
-3. **No Historical Data**: Only shows current prices, not price history or charts
-4. **Client-Side Only**: No server-side rendering for token data (could improve initial load)
-
-## 🧩 Project Structure
-
-```
-token-swap/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx          # Root layout with QueryProvider
-│   ├── page.tsx            # Main page
-│   └── globals.css         # Global styles + Tailwind
-├── components/
-│   ├── ui/                 # shadcn/ui base components
-│   ├── token-selector.tsx  # Token dropdown with search
-│   ├── token-input.tsx     # USD input with formatting
-│   ├── token-display.tsx   # Token amount display
-│   ├── swap-interface.tsx  # Main swap component
-│   └── loading-skeleton.tsx
-├── lib/
-│   ├── api/                # API integration layer
-│   ├── config/             # Token configuration
-│   ├── hooks/              # TanStack Query hooks
-│   └── utils/              # Formatting & calculations
-├── types/                  # TypeScript types
-└── tests/                  # Jest tests
-```
+For production environments, ensure:
+- Node.js 18+ is installed
+- Environment variables are properly configured
+- The build completes without errors
 
 ## 🐛 Troubleshooting
 
 ### API Key Issues
 
-If you see "API key not configured":
-1. Check that `.env.local` exists
-2. Verify `NEXT_PUBLIC_FUNKIT_API_KEY` is set
-3. Restart the dev server after adding env vars
+**Problem**: "API key not configured" error
+
+**Solution**:
+1. Verify `.env.local` exists in the root directory
+2. Check that `NEXT_PUBLIC_FUNKIT_API_KEY` is set correctly
+3. Restart the development server after adding environment variables
+4. Ensure the API key is valid and has proper permissions
 
 ### Token Not Found
 
-If a token doesn't appear:
-1. Verify the token is in `lib/config/tokens.ts`
-2. Check that the chain ID and symbol match the API
-3. Check browser console for API errors
+**Problem**: Token doesn't appear in the selector
+
+**Solution**:
+1. Verify the token is configured in `lib/config/tokens.ts`
+2. Check that the chain ID and symbol match the Funkit API
+3. Inspect the browser console for API errors
+4. Verify the token exists on the specified chain
 
 ### Build Errors
 
-If build fails:
+**Problem**: Build fails during `npm run build`
+
+**Solution**:
 1. Run `npm install` to ensure all dependencies are installed
 2. Check TypeScript errors: `npx tsc --noEmit`
-3. Verify Node.js version is 18+
+3. Verify Node.js version is 18 or higher: `node --version`
+4. Clear `.next` directory and rebuild: `rm -rf .next && npm run build`
+
+### Price Not Updating
+
+**Problem**: Token prices don't refresh
+
+**Solution**:
+1. Check network connectivity
+2. Verify API key is valid and not rate-limited
+3. Check browser console for API errors
+4. Prices refresh every 30 seconds automatically
+
+## 📝 API Integration
+
+The application uses the Funkit API for token data and pricing:
+
+### Endpoints Used
+
+1. **`getAssetErc20ByChainAndSymbol`**: Fetches token metadata (address, decimals, name)
+2. **`getAssetPriceInfo`**: Fetches current token price by chain ID and token address
+
+### Caching Strategy
+
+- **Token Info**: Cached for 5 minutes
+- **Token Prices**: Cached for 30 seconds with automatic background refetching
+
+### Error Handling
+
+- Network errors are caught and displayed with retry options
+- Invalid API responses are handled gracefully
+- User-friendly error messages are shown inline
+
+## 🔐 Security Considerations
+
+- API keys are stored in environment variables (never committed to version control)
+- Client-side API calls use `NEXT_PUBLIC_` prefix for Next.js environment variables
+- Input validation prevents invalid USD amounts
+- TypeScript provides compile-time type safety
 
 ## 📄 License
 
@@ -254,7 +319,15 @@ This project is created as a take-home assignment.
 
 ## 🙏 Acknowledgments
 
-- Design inspiration from Matcha.xyz, Coinbase, and Robinhood
-- shadcn/ui for beautiful, accessible components
-- TanStack Query for excellent data fetching patterns
-- Funkit for the token data API
+- **Funkit** - Token data and pricing API
+- **shadcn/ui** - Beautiful, accessible component library
+- **TanStack Query** - Excellent data fetching patterns
+- **Design Inspiration** - Matcha.xyz, Coinbase, and Robinhood
+
+## 🤝 Contributing
+
+This is a take-home assignment project. For questions or issues, please refer to the project maintainer.
+
+---
+
+Built with ❤️ using Next.js and React
