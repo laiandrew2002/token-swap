@@ -1,25 +1,28 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef } from "react"
 import { Token } from "@/types"
-import { TokenInput } from "@/components/token-input"
-import { TokenSelector } from "@/components/token-selector"
-import { TokenDisplay } from "@/components/token-display"
+import { TokenAmountInput } from "@/components/token-amount-input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown, TrendingUp } from "lucide-react"
 import { useTokenInfo } from "@/lib/hooks/use-token-info"
 import { useTokenPrices } from "@/lib/hooks/use-token-prices"
-import { calculateSwapAmounts } from "@/lib/utils/calculations"
-import { validateUSDInput } from "@/lib/utils/calculations"
 import { useQueryClient } from "@tanstack/react-query"
 import { motion } from "framer-motion"
+import { formatTokenAmount } from "@/lib/utils/format"
 
 export function SwapInterface() {
-  const [usdAmount, setUsdAmount] = useState("")
+  const [sourceTokenAmount, setSourceTokenAmount] = useState("")
+  const [sourceUsdAmount, setSourceUsdAmount] = useState("")
+  const [targetTokenAmount, setTargetTokenAmount] = useState("")
+  const [targetUsdAmount, setTargetUsdAmount] = useState("")
+  
   const [sourceToken, setSourceToken] = useState<Token | null>(null)
   const [targetToken, setTargetToken] = useState<Token | null>(null)
-  const [inputError, setInputError] = useState<string | null>(null)
+  
+  // Track which input was last edited to avoid circular updates
+  const lastEditedRef = useRef<"source" | "target" | null>(null)
 
   const queryClient = useQueryClient()
 
@@ -37,7 +40,7 @@ export function SwapInterface() {
       : null
   )
 
-  // Derive tokens with addresses from API responses (avoiding useEffect state updates)
+  // Derive tokens with addresses from API responses
   const sourceTokenWithAddress = useMemo(() => {
     if (sourceToken && sourceTokenInfo.data?.token) {
       return {
@@ -64,45 +67,145 @@ export function SwapInterface() {
     targetToken: targetTokenWithAddress?.address ? targetTokenWithAddress : null,
   })
 
-  // Calculate amounts
-  const usdValue = parseFloat(usdAmount) || 0
-  const validation = validateUSDInput(usdAmount)
-  const isValidInput = validation.isValid && usdValue > 0
+  // Handle source token amount change (from input)
+  const handleSourceTokenAmountChange = (value: string) => {
+    lastEditedRef.current = "source"
+    setSourceTokenAmount(value)
+    
+    // Calculate USD and target amounts
+    if (value && prices.sourcePrice && prices.targetPrice && prices.sourcePrice > 0 && prices.targetPrice > 0) {
+      const sourceValue = parseFloat(value)
+      if (!isNaN(sourceValue) && sourceValue > 0) {
+        // Calculate USD from source token amount
+        const usdValue = sourceValue * prices.sourcePrice
+        setSourceUsdAmount(usdValue.toFixed(2))
+        
+        // Calculate target token amount from USD
+        const targetValue = usdValue / prices.targetPrice
+        setTargetTokenAmount(formatTokenAmount(targetValue, targetToken?.decimals || 18))
+        setTargetUsdAmount(usdValue.toFixed(2))
+      } else {
+        setSourceUsdAmount("")
+        setTargetTokenAmount("")
+        setTargetUsdAmount("")
+      }
+    } else {
+      setSourceUsdAmount("")
+      setTargetTokenAmount("")
+      setTargetUsdAmount("")
+    }
+  }
 
-  const sourceAmount =
-    isValidInput && prices.sourcePrice
-      ? calculateSwapAmounts(usdValue, prices.sourcePrice, prices.targetPrice || 0)
-          .sourceAmount
-      : null
+  // Handle source USD amount change (from input)
+  const handleSourceUsdAmountChange = (value: string) => {
+    lastEditedRef.current = "source"
+    setSourceUsdAmount(value)
+    if (value && prices.sourcePrice && prices.sourcePrice > 0) {
+      const usdValue = parseFloat(value)
+      if (!isNaN(usdValue) && usdValue > 0) {
+        // Calculate source token amount
+        const tokenValue = usdValue / prices.sourcePrice
+        setSourceTokenAmount(formatTokenAmount(tokenValue, sourceToken?.decimals || 18))
+        
+        // Calculate target amounts
+        if (prices.targetPrice && prices.targetPrice > 0) {
+          const targetValue = usdValue / prices.targetPrice
+          setTargetTokenAmount(formatTokenAmount(targetValue, targetToken?.decimals || 18))
+          setTargetUsdAmount(usdValue.toFixed(2))
+        }
+      } else {
+        setSourceTokenAmount("")
+        setTargetTokenAmount("")
+        setTargetUsdAmount("")
+      }
+    } else {
+      setSourceTokenAmount("")
+      setTargetTokenAmount("")
+      setTargetUsdAmount("")
+    }
+  }
 
-  const targetAmount =
-    isValidInput && prices.targetPrice
-      ? calculateSwapAmounts(usdValue, prices.sourcePrice || 0, prices.targetPrice)
-          .targetAmount
-      : null
+  // Handle target token amount change (from input)
+  const handleTargetTokenAmountChange = (value: string) => {
+    lastEditedRef.current = "target"
+    setTargetTokenAmount(value)
+    
+    // Calculate USD and source amounts
+    if (value && prices.sourcePrice && prices.targetPrice && prices.sourcePrice > 0 && prices.targetPrice > 0) {
+      const targetValue = parseFloat(value)
+      if (!isNaN(targetValue) && targetValue > 0) {
+        // Calculate USD from target token amount
+        const usdValue = targetValue * prices.targetPrice
+        setTargetUsdAmount(usdValue.toFixed(2))
+        
+        // Calculate source token amount from USD
+        const sourceValue = usdValue / prices.sourcePrice
+        setSourceTokenAmount(formatTokenAmount(sourceValue, sourceToken?.decimals || 18))
+        setSourceUsdAmount(usdValue.toFixed(2))
+      } else {
+        setTargetUsdAmount("")
+        setSourceTokenAmount("")
+        setSourceUsdAmount("")
+      }
+    } else {
+      setTargetUsdAmount("")
+      setSourceTokenAmount("")
+      setSourceUsdAmount("")
+    }
+  }
 
-  // Handle USD input change
-  const handleUSDChange = (value: string) => {
-    setUsdAmount(value)
-    const validation = validateUSDInput(value)
-    setInputError(validation.error || null)
+  // Handle target USD amount change (from input)
+  const handleTargetUsdAmountChange = (value: string) => {
+    lastEditedRef.current = "target"
+    setTargetUsdAmount(value)
+    if (value && prices.targetPrice && prices.targetPrice > 0) {
+      const usdValue = parseFloat(value)
+      if (!isNaN(usdValue) && usdValue > 0) {
+        // Calculate target token amount
+        const tokenValue = usdValue / prices.targetPrice
+        setTargetTokenAmount(formatTokenAmount(tokenValue, targetToken?.decimals || 18))
+        
+        // Calculate source amounts
+        if (prices.sourcePrice && prices.sourcePrice > 0) {
+          const sourceValue = usdValue / prices.sourcePrice
+          setSourceTokenAmount(formatTokenAmount(sourceValue, sourceToken?.decimals || 18))
+          setSourceUsdAmount(usdValue.toFixed(2))
+        }
+      } else {
+        setSourceTokenAmount("")
+        setSourceUsdAmount("")
+        setTargetTokenAmount("")
+      }
+    } else {
+      setSourceTokenAmount("")
+      setSourceUsdAmount("")
+      setTargetTokenAmount("")
+    }
   }
 
   // Handle flip tokens
   const handleFlip = () => {
-    const temp = sourceToken
+    const tempToken = sourceToken
+    const tempAmount = sourceTokenAmount
+    const tempUsd = sourceUsdAmount
+    
     setSourceToken(targetToken)
-    setTargetToken(temp)
+    setSourceTokenAmount(targetTokenAmount)
+    setSourceUsdAmount(targetUsdAmount)
+    
+    setTargetToken(tempToken)
+    setTargetTokenAmount(tempAmount)
+    setTargetUsdAmount(tempUsd)
+    
     // Invalidate price queries to refetch
     queryClient.invalidateQueries({ queryKey: ["tokenPrice"] })
   }
 
-  // Retry price fetch
+  // Retry handlers
   const handleRetryPrices = () => {
     queryClient.invalidateQueries({ queryKey: ["tokenPrice"] })
   }
 
-  // Retry token info fetch
   const handleRetrySourceInfo = () => {
     queryClient.invalidateQueries({
       queryKey: ["tokenInfo", sourceToken?.chainId, sourceToken?.symbol],
@@ -121,6 +224,11 @@ export function SwapInterface() {
     (sourceToken && !sourceTokenWithAddress?.address) ||
     (targetToken && !targetTokenWithAddress?.address)
 
+  // Calculate exchange rate
+  const exchangeRate = prices.sourcePrice && prices.targetPrice && prices.targetPrice > 0
+    ? prices.sourcePrice / prices.targetPrice
+    : null
+
   return (
     <div className="w-full max-w-2xl mx-auto p-4 sm:p-6">
       <Card className="w-full border-none shadow-none">
@@ -130,39 +238,43 @@ export function SwapInterface() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <TokenInput
-            value={usdAmount}
-            onChange={handleUSDChange}
-            error={inputError || undefined}
+          {/* Sell Section */}
+          <TokenAmountInput
+            label="From"
+            token={sourceToken}
+            onTokenSelect={setSourceToken}
+            excludeToken={targetToken}
+            tokenAmount={sourceTokenAmount}
+            usdAmount={sourceUsdAmount}
+            onTokenAmountChange={handleSourceTokenAmountChange}
+            onUsdAmountChange={handleSourceUsdAmountChange}
+            isLoading={isLoading || !!(sourceToken && prices.isLoading && !prices.sourceError)}
+            error={
+              sourceTokenInfo.data?.error ||
+              (prices.sourceError && sourceToken ? prices.sourceError : null)
+            }
+            onRetry={
+              prices.sourceError && sourceToken
+                ? handleRetryPrices
+                : sourceTokenInfo.data?.error
+                  ? handleRetrySourceInfo
+                  : undefined
+            }
           />
 
-          {/* Token Selectors and Flip Button */}
-          <div className="space-y-4">
-            {/* Source Token */}
-            <div className="space-y-4">
-              <TokenSelector
-                selectedToken={sourceToken}
-                onSelect={setSourceToken}
-                label="From"
-                excludeToken={targetToken}
-              />
-              {sourceTokenInfo.data?.error && (
-                <div className="text-sm text-destructive flex items-center gap-2">
-                  <span>{sourceTokenInfo.data.error}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleRetrySourceInfo}
-                    className="h-6 text-xs"
-                  >
-                    Retry
-                  </Button>
+          <div className="relative py-2">
+            <div className="relative flex flex-col items-center gap-2">
+              {/* Rate */}
+              {sourceToken && targetToken && exchangeRate && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                  <TrendingUp className="h-4 w-4 text-primary shrink-0" />
+                  <span className="font-medium">
+                    1 {sourceToken.symbol} = {prices.rate?.toFixed(6)} {targetToken.symbol}
+                  </span>
                 </div>
               )}
-            </div>
-
-            {/* Flip Button */}
-            <div className="flex justify-center -my-2">
+              
+              {/* Flip Button */}
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
@@ -171,7 +283,7 @@ export function SwapInterface() {
                   type="button"
                   variant="outline"
                   size="icon"
-                  className="rounded-full h-10 w-10"
+                  className="rounded-full h-10 w-10 bg-background"
                   onClick={handleFlip}
                   aria-label="Flip tokens"
                   disabled={!sourceToken || !targetToken}
@@ -180,87 +292,33 @@ export function SwapInterface() {
                 </Button>
               </motion.div>
             </div>
-
-            {/* Target Token */}
-            <div className="space-y-4">
-              <TokenSelector
-                selectedToken={targetToken}
-                onSelect={setTargetToken}
-                label="To"
-                excludeToken={sourceToken}
-              />
-              {targetTokenInfo.data?.error && (
-                <div className="text-sm text-destructive flex items-center gap-2">
-                  <span>{targetTokenInfo.data.error}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleRetryTargetInfo}
-                    className="h-6 text-xs"
-                  >
-                    Retry
-                  </Button>
-                </div>
-              )}
-            </div>
           </div>
 
-          {/* Results */}
-          {(sourceToken && targetToken) && (
-            <div className="pt-4 border-t space-y-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mt-4">
-                <TrendingUp className="h-4 w-4 text-primary shrink-0" />
-                <span className="font-medium">
-                  1 {sourceToken.symbol} = {prices.rate?.toFixed(6)} {targetToken.symbol}
-                </span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <TokenDisplay
-                  token={sourceToken}
-                  amount={sourceAmount}
-                  isLoading={
-                    isLoading ||
-                    !!(sourceToken && prices.isLoading && !prices.sourceError)
-                  }
-                  error={
-                    sourceTokenInfo.data?.error ||
-                    (prices.sourceError && sourceToken ? prices.sourceError : null)
-                  }
-                  onRetry={
-                    prices.sourceError && sourceToken
-                      ? handleRetryPrices
-                      : sourceTokenInfo.data?.error
-                        ? handleRetrySourceInfo
-                        : undefined
-                  }
-                  label="From Amount"
-                />
-                <TokenDisplay
-                  token={targetToken}
-                  amount={targetAmount}
-                  isLoading={
-                    isLoading ||
-                    !!(targetToken && prices.isLoading && !prices.targetError)
-                  }
-                  error={
-                    targetTokenInfo.data?.error ||
-                    (prices.targetError && targetToken ? prices.targetError : null)
-                  }
-                  onRetry={
-                    prices.targetError && targetToken
-                      ? handleRetryPrices
-                      : targetTokenInfo.data?.error
-                        ? handleRetryTargetInfo
-                        : undefined
-                  }
-                  label="To Amount"
-                />
-              </div>
-            </div>
-          )}
+          {/* Buy Section */}
+          <TokenAmountInput
+            label="To"
+            token={targetToken}
+            onTokenSelect={setTargetToken}
+            excludeToken={sourceToken}
+            tokenAmount={targetTokenAmount}
+            usdAmount={targetUsdAmount}
+            onTokenAmountChange={handleTargetTokenAmountChange}
+            onUsdAmountChange={handleTargetUsdAmountChange}
+            isLoading={isLoading || !!(targetToken && prices.isLoading && !prices.targetError)}
+            error={
+              targetTokenInfo.data?.error ||
+              (prices.targetError && targetToken ? prices.targetError : null)
+            }
+            onRetry={
+              prices.targetError && targetToken
+                ? handleRetryPrices
+                : targetTokenInfo.data?.error
+                  ? handleRetryTargetInfo
+                  : undefined
+            }
+          />
         </CardContent>
       </Card>
     </div>
   )
 }
-

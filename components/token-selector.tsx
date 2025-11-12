@@ -30,7 +30,6 @@ export function TokenSelector({
   const searchInputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
-  // Filter tokens based on search and exclude
   const filteredTokens = SUPPORTED_TOKENS.filter((token) => {
     const matchesSearch =
       token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -44,7 +43,6 @@ export function TokenSelector({
     setHighlightedIndex(0)
   }
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -62,14 +60,13 @@ export function TokenSelector({
     }
   }, [isOpen])
 
-  // Focus search input when dropdown opens
   useEffect(() => {
     if (isOpen && searchInputRef.current) {
       searchInputRef.current.focus()
     }
   }, [isOpen])
 
-  // Keyboard navigation
+  // handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
       if (e.key === "Enter" || e.key === " ") {
@@ -117,7 +114,6 @@ export function TokenSelector({
 
   return (
     <div ref={containerRef} className="relative w-full">
-      <label className="text-sm font-medium mb-2 block">{label}</label>
       <Button
         type="button"
         variant="outline"
@@ -159,7 +155,7 @@ export function TokenSelector({
               )}
             </>
           ) : (
-            <span>Select token</span>
+            <span>{label}</span>
           )}
         </div>
         <ChevronDown

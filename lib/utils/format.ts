@@ -1,6 +1,5 @@
 /**
  * Format number with commas and appropriate decimal places
- * Inspired by Robinhood's clean number formatting
  */
 export function formatNumber(
   value: number | string,
@@ -53,19 +52,54 @@ export function formatTokenAmount(
     return "0"
   }
 
-  // Determine decimal places based on value size
-  let decimals = 2
-  if (numValue < 0.01) {
-    decimals = 6
-  } else if (numValue < 1) {
-    decimals = 4
+  // Use tokenDecimals to define a sensible dynamic decimal display range, but limit min/max shown decimals
+  let decimals: number
+
+  if (numValue < 1) {
+    // Show min(tokenDecimals, 6) decimals but not less than 2
+    decimals = Math.min(Math.max(tokenDecimals, 2), 6)
   } else if (numValue < 1000) {
-    decimals = 2
+    decimals = Math.min(tokenDecimals, 4)
+    decimals = Math.max(decimals, 2)
   } else {
     decimals = 2
   }
 
   return formatNumber(numValue, decimals, true)
+}
+
+/**
+ * Format USD amount with appropriate decimals
+ */
+export function formatUSDAmount(value: number | string): string {
+  const numValue = typeof value === "string" ? parseFloat(value) : value
+
+  if (isNaN(numValue) || numValue === 0) {
+    return "0"
+  }
+
+  const absValue = Math.abs(numValue)
+  const sign = numValue < 0 ? "-" : ""
+
+  // Trillion
+  if (absValue >= 1_000_000_000_000) {
+    const trillions = absValue / 1_000_000_000_000
+    return `${sign}${trillions.toFixed(2)}T`
+  }
+
+  // Billion
+  if (absValue >= 1_000_000_000) {
+    const billions = absValue / 1_000_000_000
+    return `${sign}${billions.toFixed(2)}B`
+  }
+
+  // Million
+  if (absValue >= 1_000_000) {
+    const millions = absValue / 1_000_000
+    return `${sign}${millions.toFixed(2)}M`
+  }
+
+  return sign + numValue.toFixed(2)
 }
 
 /**
