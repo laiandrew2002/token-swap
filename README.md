@@ -67,7 +67,7 @@ Before you begin, ensure you have the following installed:
 
 - **Node.js** 18+ (20+ recommended)
 - **npm** or **yarn** package manager
-- **Funkit API Key** - [Get one here](https://funkit.ai)
+- **Funkit API Key**
 
 ## 🚀 Getting Started
 
