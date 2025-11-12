@@ -10,13 +10,13 @@ A modern, production-ready web application for calculating token swap amounts ac
 
 ![Token Swap Calculator Interface](./docs/screenshot-app.png)
 
-*The main swap interface showing the bidirectional editable inputs with token amounts and USD values side by side.*
+_The main swap interface showing the bidirectional editable inputs with token amounts and USD values side by side._
 
 ### Performance Metrics
 
 ![Lighthouse Score](./docs/screenshot-lighthouse.png)
 
-*Lighthouse performance audit showing optimized load times, accessibility, and best practices scores.*
+_Lighthouse performance audit showing optimized load times, accessibility, and best practices scores._
 
 ## ✨ Features
 
@@ -27,7 +27,7 @@ A modern, production-ready web application for calculating token swap amounts ac
 - **Instant Calculations**: Real-time conversion calculations as you type
 - **Smart Number Formatting**: Large USD amounts automatically abbreviated (M, B, T)
 - **Professional Error Handling**: User-friendly error messages with intelligent retry logic
-- **Smooth User Experience**: 
+- **Smooth User Experience**:
   - Loading skeletons that prevent layout shift
   - Comprehensive error handling with retry functionality
   - Subtle animations and transitions
@@ -38,15 +38,18 @@ A modern, production-ready web application for calculating token swap amounts ac
 ## 🛠️ Tech Stack
 
 ### Core Framework
+
 - **Next.js 16** - React framework with App Router
 - **React 19.2.0** - UI library
 - **TypeScript 5** - Type-safe development
 
 ### State Management & Data Fetching
+
 - **TanStack Query (React Query) 5** - Server state management with caching and refetching
 - **TanStack Query DevTools** - Development debugging tools
 
 ### UI & Styling
+
 - **Tailwind CSS 4** - Utility-first CSS framework
 - **shadcn/ui** - Accessible component library
 - **Framer Motion** - Animation library
@@ -54,9 +57,11 @@ A modern, production-ready web application for calculating token swap amounts ac
 - **Lucide React** - Icon library
 
 ### API Integration
+
 - **@funkit/api-base** - Token data and pricing API
 
 ### Testing
+
 - **Jest** - JavaScript testing framework
 - **React Testing Library** - React component testing utilities
 - **Testing Library User Event** - User interaction simulation
@@ -156,6 +161,7 @@ npm run test:coverage
 ### Test Coverage
 
 The test suite covers:
+
 - ✅ Component rendering and user interactions
 - ✅ Bidirectional input conversion (token amount ↔ USD)
 - ✅ Input validation and error handling
@@ -172,10 +178,10 @@ The test suite covers:
 it('calls onTokenAmountChange when token amount is typed', async () => {
   const handleChange = jest.fn()
   render(<TokenAmountInput onTokenAmountChange={handleChange} token={mockToken} />)
-  
+
   const input = container.querySelector('input[placeholder="0.00"]')
   await userEvent.type(input, '123')
-  
+
   expect(handleChange).toHaveBeenCalled()
 })
 ```
@@ -190,6 +196,7 @@ npx lighthouse https://token-swap-kappa.vercel.app/ --view
 ```
 
 The application is optimized for:
+
 - Fast initial load times
 - Smooth interactions with memoization
 - Efficient API caching with TanStack Query
@@ -199,17 +206,17 @@ The application is optimized for:
 
 The application currently supports the following token-chain pairs:
 
-| Token | Chain | Chain ID |
-|-------|-------|----------|
-| USDC  | Ethereum | 1 |
-| USDT  | Polygon | 137 |
-| ETH   | Base | 8453 |
-| WBTC  | Ethereum | 1 |
-| UNI   | Uniswap | 1 |
-| LINK  | Chainlink | 1 |
-| AAVE  | Aave | 1 |
-| MATIC | Polygon | 1 |
-| SUSHI | SushiSwap | 1 |
+| Token | Chain     | Chain ID |
+| ----- | --------- | -------- |
+| USDC  | Ethereum  | 1        |
+| USDT  | Polygon   | 137      |
+| ETH   | Base      | 8453     |
+| WBTC  | Ethereum  | 1        |
+| UNI   | Uniswap   | 1        |
+| LINK  | Chainlink | 1        |
+| AAVE  | Aave      | 1        |
+| MATIC | Polygon   | 1        |
+| SUSHI | SushiSwap | 1        |
 
 > **Note**: The token list can be easily extended by modifying `lib/config/tokens.ts`.
 
@@ -277,6 +284,7 @@ token-swap/
 ### Code Style
 
 The project uses:
+
 - **ESLint** with Next.js configuration for code linting
 - **TypeScript** for type checking
 - **Prettier** (if configured) for code formatting
@@ -288,16 +296,19 @@ This application incorporates specific, well-researched UX patterns from industr
 ### UX Patterns from Leading Platforms
 
 #### 1. **Matcha.xyz Patterns**
+
 - **Instant Swap Preview**: Real-time rate updates as users input amounts - no "Calculate" button needed. This reduces friction and provides immediate feedback.
 - **Integrated Search Dropdown**: Token selector with inline search functionality (not a modal) for faster interaction. Users can type to filter tokens without opening a separate dialog.
 - **Flip Button**: Quick swap between source and target tokens with smooth animation. The circular arrow button provides visual feedback and makes token reversal intuitive.
 
 #### 2. **Coinbase Patterns**
+
 - **Conservative Color Scheme**: Professional grays and blues (#0052ff primary) create a trustworthy, financial-services feel. This color choice builds user confidence.
 - **Clear Visual Hierarchy**: Token amount and USD value positioned side by side with clear labels. Information is scannable and the relationship between values is immediately apparent.
 - **Skeleton Loaders**: Loading states that match the final content shape prevent layout shift and provide smooth loading experience. Users see the structure before content loads.
 
 #### 3. **Robinhood Patterns**
+
 - **Clean Number Formatting**: Commas and appropriate decimal places (e.g., "1,234.56") make large numbers readable. Formatting adapts based on value size.
 - **Smart Abbreviations**: Large USD amounts automatically abbreviated (1.5M, 1.5B, 1.5T) to keep the interface clean and readable.
 - **Subtle Hover States**: Scale transforms on interactive elements (flip button, clear button) provide tactile feedback without being distracting.
@@ -353,6 +364,7 @@ npm start
 ```
 
 For production environments, ensure:
+
 - Node.js 18+ is installed
 - Environment variables are properly configured
 - The build completes without errors
@@ -364,6 +376,7 @@ For production environments, ensure:
 **Problem**: "API key not configured" error
 
 **Solution**:
+
 1. Verify `.env.local` exists in the root directory
 2. Check that `NEXT_PUBLIC_FUNKIT_API_KEY` is set correctly
 3. Restart the development server after adding environment variables
@@ -374,6 +387,7 @@ For production environments, ensure:
 **Problem**: Token doesn't appear in the selector
 
 **Solution**:
+
 1. Verify the token is configured in `lib/config/tokens.ts`
 2. Check that the chain ID and symbol match the Funkit API
 3. Inspect the browser console for API errors
@@ -384,6 +398,7 @@ For production environments, ensure:
 **Problem**: Build fails during `npm run build`
 
 **Solution**:
+
 1. Run `npm install` to ensure all dependencies are installed
 2. Check TypeScript errors: `npx tsc --noEmit`
 3. Verify Node.js version is 18 or higher: `node --version`
@@ -394,6 +409,7 @@ For production environments, ensure:
 **Problem**: Token prices don't refresh
 
 **Solution**:
+
 1. Check network connectivity
 2. Verify API key is valid and not rate-limited
 3. Check browser console for API errors
@@ -479,6 +495,7 @@ This section documents key design decisions, their rationale, and the trade-offs
 ### Future Enhancements
 
 If this were to be extended, potential improvements could include:
+
 - Expanded token list with search/filter
 - Price history charts
 - Server-side rendering for initial token data

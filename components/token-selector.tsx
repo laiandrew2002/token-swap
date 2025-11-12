@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-import { Token, ChainInfo } from "@/types"
-import { SUPPORTED_TOKENS, getChainInfo } from "@/lib/config/tokens"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card } from "@/components/ui/card"
-import { ChevronDown, Search, X } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import { cn } from "@/lib/utils"
+import { useState, useRef, useEffect } from "react";
+import { Token, ChainInfo } from "@/types";
+import { SUPPORTED_TOKENS, getChainInfo } from "@/lib/config/tokens";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { ChevronDown, Search, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface TokenSelectorProps {
-  selectedToken: Token | null
-  onSelect: (token: Token) => void
-  label?: string
-  excludeToken?: Token | null
+  selectedToken: Token | null;
+  onSelect: (token: Token) => void;
+  label?: string;
+  excludeToken?: Token | null;
 }
 
 export function TokenSelector({
@@ -23,24 +23,27 @@ export function TokenSelector({
   label = "Select Token",
   excludeToken,
 }: TokenSelectorProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [highlightedIndex, setHighlightedIndex] = useState(0)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const listRef = useRef<HTMLDivElement>(null)
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   const filteredTokens = SUPPORTED_TOKENS.filter((token) => {
     const matchesSearch =
       token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      token.name.toLowerCase().includes(searchQuery.toLowerCase())
-    const notExcluded = !excludeToken || token.symbol !== excludeToken.symbol || token.chainId !== excludeToken.chainId
-    return matchesSearch && notExcluded
-  })
+      token.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const notExcluded =
+      !excludeToken ||
+      token.symbol !== excludeToken.symbol ||
+      token.chainId !== excludeToken.chainId;
+    return matchesSearch && notExcluded;
+  });
 
   // Reset highlighted index when search changes, only if not already 0
   if (highlightedIndex !== 0 && searchQuery !== "") {
-    setHighlightedIndex(0)
+    setHighlightedIndex(0);
   }
 
   useEffect(() => {
@@ -49,68 +52,69 @@ export function TokenSelector({
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
       ) {
-        setIsOpen(false)
-        setSearchQuery("")
+        setIsOpen(false);
+        setSearchQuery("");
       }
-    }
+    };
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
-      return () => document.removeEventListener("mousedown", handleClickOutside)
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen && searchInputRef.current) {
-      searchInputRef.current.focus()
+      searchInputRef.current.focus();
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   // handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
       if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault()
-        setIsOpen(true)
+        e.preventDefault();
+        setIsOpen(true);
       }
-      return
+      return;
     }
 
     switch (e.key) {
       case "ArrowDown":
-        e.preventDefault()
+        e.preventDefault();
         setHighlightedIndex((prev) =>
           prev < filteredTokens.length - 1 ? prev + 1 : prev
-        )
-        break
+        );
+        break;
       case "ArrowUp":
-        e.preventDefault()
-        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0))
-        break
+        e.preventDefault();
+        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+        break;
       case "Enter":
-        e.preventDefault()
+        e.preventDefault();
         if (filteredTokens[highlightedIndex]) {
-          handleSelectToken(filteredTokens[highlightedIndex])
+          handleSelectToken(filteredTokens[highlightedIndex]);
         }
-        break
+        break;
       case "Escape":
-        e.preventDefault()
-        setIsOpen(false)
-        setSearchQuery("")
-        break
+        e.preventDefault();
+        setIsOpen(false);
+        setSearchQuery("");
+        break;
     }
-  }
+  };
 
   const handleSelectToken = (token: Token) => {
-    onSelect(token)
-    setIsOpen(false)
-    setSearchQuery("")
-    setHighlightedIndex(0)
-  }
+    onSelect(token);
+    setIsOpen(false);
+    setSearchQuery("");
+    setHighlightedIndex(0);
+  };
 
   const selectedChainInfo = selectedToken
     ? getChainInfo(selectedToken.chainId)
-    : null
+    : null;
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -143,7 +147,9 @@ export function TokenSelector({
                 </div>
               )}
               <div className="flex-1 min-w-0 text-left">
-                <div className="font-medium truncate">{selectedToken.symbol}</div>
+                <div className="font-medium truncate">
+                  {selectedToken.symbol}
+                </div>
                 <div className="text-xs text-muted-foreground truncate">
                   {selectedToken.name}
                 </div>
@@ -210,8 +216,8 @@ export function TokenSelector({
                   </div>
                 ) : (
                   filteredTokens.map((token, index) => {
-                    const chainInfo = getChainInfo(token.chainId)
-                    const isHighlighted = index === highlightedIndex
+                    const chainInfo = getChainInfo(token.chainId);
+                    const isHighlighted = index === highlightedIndex;
 
                     return (
                       <motion.button
@@ -255,7 +261,7 @@ export function TokenSelector({
                           </div>
                         )}
                       </motion.button>
-                    )
+                    );
                   })
                 )}
               </div>
@@ -264,6 +270,5 @@ export function TokenSelector({
         )}
       </AnimatePresence>
     </div>
-  )
+  );
 }
-

@@ -1,5 +1,5 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
 const Select = React.forwardRef<
   HTMLSelectElement,
@@ -16,9 +16,8 @@ const Select = React.forwardRef<
     >
       {children}
     </select>
-  )
-})
-Select.displayName = "Select"
+  );
+});
+Select.displayName = "Select";
 
-export { Select }
-
+export { Select };

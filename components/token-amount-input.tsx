@@ -1,28 +1,28 @@
-"use client"
+"use client";
 
-import { useState, useRef } from "react"
-import { Token } from "@/types"
-import { TokenSelector } from "@/components/token-selector"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { parseNumericInput, formatUSDAmount } from "@/lib/utils/format"
-import { getUserFriendlyError, isRetryableError } from "@/lib/utils/errors"
-import { Skeleton } from "@/components/ui/skeleton"
-import { cn } from "@/lib/utils"
-import { X, AlertCircle } from "lucide-react"
+import { useState, useRef } from "react";
+import { Token } from "@/types";
+import { TokenSelector } from "@/components/token-selector";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { parseNumericInput, formatUSDAmount } from "@/lib/utils/format";
+import { getUserFriendlyError, isRetryableError } from "@/lib/utils/errors";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { X, AlertCircle } from "lucide-react";
 
 interface TokenAmountInputProps {
-  label: string
-  token: Token | null
-  onTokenSelect: (token: Token) => void
-  excludeToken?: Token | null
-  tokenAmount: string
-  usdAmount: string
-  onTokenAmountChange: (value: string) => void
-  onUsdAmountChange: (value: string) => void
-  isLoading?: boolean
-  error?: string | null
-  onRetry?: () => void
+  label: string;
+  token: Token | null;
+  onTokenSelect: (token: Token) => void;
+  excludeToken?: Token | null;
+  tokenAmount: string;
+  usdAmount: string;
+  onTokenAmountChange: (value: string) => void;
+  onUsdAmountChange: (value: string) => void;
+  isLoading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
 }
 
 export function TokenAmountInput({
@@ -38,49 +38,50 @@ export function TokenAmountInput({
   error = null,
   onRetry,
 }: TokenAmountInputProps) {
-  const [isTokenFocused, setIsTokenFocused] = useState(false)
-  const [isUsdFocused, setIsUsdFocused] = useState(false)
-  const tokenInputRef = useRef<HTMLInputElement>(null)
-  const usdInputRef = useRef<HTMLInputElement>(null)
+  const [isTokenFocused, setIsTokenFocused] = useState(false);
+  const [isUsdFocused, setIsUsdFocused] = useState(false);
+  const tokenInputRef = useRef<HTMLInputElement>(null);
+  const usdInputRef = useRef<HTMLInputElement>(null);
 
   // Handle token amount input
   const handleTokenAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const cleaned = parseNumericInput(e.target.value)
-    onTokenAmountChange(cleaned)
+    const cleaned = parseNumericInput(e.target.value);
+    onTokenAmountChange(cleaned);
     // Parent component handles USD conversion
-  }
+  };
 
   // Handle USD amount input
   const handleUsdAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Remove $ and commas for parsing
-    let cleaned = e.target.value.replace(/[$,]/g, "")
-    cleaned = parseNumericInput(cleaned)
-    onUsdAmountChange(cleaned)
+    let cleaned = e.target.value.replace(/[$,]/g, "");
+    cleaned = parseNumericInput(cleaned);
+    onUsdAmountChange(cleaned);
     // Parent component handles token conversion
-  }
+  };
 
   const handleClear = () => {
-    onTokenAmountChange("")
-    onUsdAmountChange("")
-    tokenInputRef.current?.focus()
-  }
+    onTokenAmountChange("");
+    onUsdAmountChange("");
+    tokenInputRef.current?.focus();
+  };
 
-  const displayTokenAmount = tokenAmount || ""
-  const displayUsdAmount = usdAmount || ""
-  
+  const displayTokenAmount = tokenAmount || "";
+  const displayUsdAmount = usdAmount || "";
+
   // Format USD for display (when not focused)
-  const formattedUsd = usdAmount && !isUsdFocused
-    ? (() => {
-        const num = parseFloat(usdAmount)
-        if (isNaN(num)) return ""
-        // Use abbreviated format for numbers >= 1000
-        if (Math.abs(num) >= 1000) {
-          return formatUSDAmount(num)
-        }
-        // For smaller numbers, show with commas and 2 decimal places
-        return num.toFixed(2)
-      })()
-    : usdAmount
+  const formattedUsd =
+    usdAmount && !isUsdFocused
+      ? (() => {
+          const num = parseFloat(usdAmount);
+          if (isNaN(num)) return "";
+          // Use abbreviated format for numbers >= 1000
+          if (Math.abs(num) >= 1000) {
+            return formatUSDAmount(num);
+          }
+          // For smaller numbers, show with commas and 2 decimal places
+          return num.toFixed(2);
+        })()
+      : usdAmount;
 
   return (
     <div className="space-y-3">
@@ -147,7 +148,9 @@ export function TokenAmountInput({
               className={cn(
                 "h-12 px-4 flex items-center justify-center rounded-md border relative",
                 "w-full sm:w-auto text-right",
-                isUsdFocused ? "bg-background ring-2 ring-primary ring-offset-2" : "bg-muted/50"
+                isUsdFocused
+                  ? "bg-background ring-2 ring-primary ring-offset-2"
+                  : "bg-muted/50"
               )}
             >
               <span className="text-muted-foreground mr-1">$</span>
@@ -184,6 +187,5 @@ export function TokenAmountInput({
         </div>
       </div>
     </div>
-  )
+  );
 }
-

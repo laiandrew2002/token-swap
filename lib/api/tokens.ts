@@ -1,16 +1,16 @@
-import { getAssetErc20ByChainAndSymbol } from "@funkit/api-base"
-import { TokenInfo } from "@/types"
+import { getAssetErc20ByChainAndSymbol } from "@funkit/api-base";
+import { TokenInfo } from "@/types";
 
-const API_KEY = process.env.NEXT_PUBLIC_FUNKIT_API_KEY || ""
+const API_KEY = process.env.NEXT_PUBLIC_FUNKIT_API_KEY || "";
 
 export interface GetTokenInfoParams {
-  chainId: string
-  symbol: string
+  chainId: string;
+  symbol: string;
 }
 
 export interface GetTokenInfoResult {
-  token: TokenInfo | null
-  error: string | null
+  token: TokenInfo | null;
+  error: string | null;
 }
 
 /**
@@ -26,20 +26,20 @@ export async function getTokenInfo({
       return {
         token: null,
         error: "API key not configured",
-      }
+      };
     }
 
     const result = await getAssetErc20ByChainAndSymbol({
       chainId,
       symbol,
       apiKey: API_KEY,
-    })
+    });
 
     if (!result) {
       return {
         token: null,
         error: `Token ${symbol} not found on chain ${chainId}`,
-      }
+      };
     }
 
     // Map the API response to our TokenInfo type
@@ -49,17 +49,15 @@ export async function getTokenInfo({
       address: result.address || "",
       name: result.name || symbol,
       decimals: result.decimals || 18,
-    }
+    };
 
-    return { token, error: null }
+    return { token, error: null };
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error occurred"
+      error instanceof Error ? error.message : "Unknown error occurred";
     return {
       token: null,
       error: `Failed to fetch token info: ${errorMessage}`,
-    }
+    };
   }
 }
-
-

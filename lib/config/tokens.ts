@@ -1,4 +1,4 @@
-import { Token, ChainInfo } from "@/types"
+import { Token, ChainInfo } from "@/types";
 
 export const CHAINS: Record<string, ChainInfo> = {
   "1": {
@@ -16,7 +16,7 @@ export const CHAINS: Record<string, ChainInfo> = {
     name: "Base",
     shortName: "BASE",
   },
-}
+};
 
 export const SUPPORTED_TOKENS: Token[] = [
   {
@@ -91,17 +91,16 @@ export const SUPPORTED_TOKENS: Token[] = [
     decimals: 18,
     icon: "/assets/sushi.svg",
   },
-]
+];
 
 // Helper function to get chain info
 export function getChainInfo(chainId: string): ChainInfo | undefined {
-  return CHAINS[chainId]
+  return CHAINS[chainId];
 }
 
 // Helper function to get token by symbol and chain
 export function getToken(symbol: string, chainId: string): Token | undefined {
   return SUPPORTED_TOKENS.find(
     (token) => token.symbol === symbol && token.chainId === chainId
-  )
+  );
 }
-
