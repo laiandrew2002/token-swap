@@ -323,7 +323,7 @@ export function SwapInterface() {
                   type="button"
                   variant="outline"
                   size="icon"
-                  className="rounded-full h-10 w-10 bg-background"
+                  className="rounded-full h-10 w-10 bg-background cursor-pointer"
                   onClick={handleFlip}
                   aria-label="Flip tokens"
                   disabled={!sourceToken || !targetToken}

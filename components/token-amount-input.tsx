@@ -210,7 +210,7 @@ export function TokenAmountInput({
                   variant="ghost"
                   size="icon"
                   onClick={handleClear}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-accent z-10"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-accent z-10 cursor-pointer"
                   aria-label="Clear input"
                 >
                   <X className="h-4 w-4" />

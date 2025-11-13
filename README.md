@@ -129,12 +129,13 @@ npm start
 - **Clear Input**: Click the X button in the USD field to clear both amounts
 - **Smart Formatting**: Large USD amounts are automatically abbreviated (e.g., 1.5M for $1,500,000)
 - **Retry on Error**: If an API call fails, click "Try Again" for retryable errors
-- **Real-time Updates**: Token prices automatically refresh every 30 seconds
+- **Real-time Updates**: Token prices automatically refresh every 30 seconds (see `lib/hooks/use-token-prices.ts:30-31` for `refetchInterval` configuration)
 - **Responsive Design**: On mobile, inputs stack vertically for better usability
+- **Accessibility**: Full ARIA support with `aria-live` regions for dynamic content and motion fallback for `prefers-reduced-motion`
 
 ## 🧪 Testing & Quality Assurance
 
-This project includes comprehensive testing with a focus on component testing and utility function coverage.
+This project includes comprehensive testing with a focus on component testing and utility function coverage. For a complete list of edge cases and error states, see the [Edge State Checklist](./docs/EDGE_STATE_CHECKLIST.md).
 
 ### Test Structure
 
@@ -291,28 +292,62 @@ The project uses:
 
 ## 🎨 Design Philosophy & Product Sense
 
-This application incorporates specific, well-researched UX patterns from industry-leading cryptocurrency platforms:
+This application incorporates specific, well-researched UX patterns from industry-leading cryptocurrency platforms. Each pattern is explicitly referenced with links and rationale.
 
 ### UX Patterns from Leading Platforms
 
 #### 1. **Matcha.xyz Patterns**
 
+**Reference**: [Matcha.xyz Swap Interface](https://matcha.xyz/)
+
 - **Instant Swap Preview**: Real-time rate updates as users input amounts - no "Calculate" button needed. This reduces friction and provides immediate feedback.
+  - **Implementation**: Exchange rate displays automatically when both tokens are selected (`components/swap-interface.tsx:300-312`)
+  - **Rationale**: Eliminates the need for a separate "Calculate" action, reducing user steps and providing instant feedback
+  - **Source**: Matcha.xyz's swap interface shows rates immediately upon token selection
+
 - **Integrated Search Dropdown**: Token selector with inline search functionality (not a modal) for faster interaction. Users can type to filter tokens without opening a separate dialog.
+  - **Implementation**: `TokenSelector` component with inline search (`components/token-selector.tsx:186-206`)
+  - **Rationale**: Faster token selection without modal overhead, keyboard-friendly
+  - **Source**: Matcha.xyz uses inline search dropdowns for token selection
+
 - **Flip Button**: Quick swap between source and target tokens with smooth animation. The circular arrow button provides visual feedback and makes token reversal intuitive.
+  - **Implementation**: Flip button with motion animation (`components/swap-interface.tsx:316-333`)
+  - **Rationale**: Common pattern in DEX interfaces for quick token reversal
+  - **Source**: Matcha.xyz and other DEX platforms use flip/swap buttons between token pairs
 
 #### 2. **Coinbase Patterns**
 
-- **Conservative Color Scheme**: Professional grays and blues (#0052ff primary) create a trustworthy, financial-services feel. This color choice builds user confidence.
+**Reference**: [Coinbase Exchange Interface](https://www.coinbase.com/exchange)
+
 - **Clear Visual Hierarchy**: Token amount and USD value positioned side by side with clear labels. Information is scannable and the relationship between values is immediately apparent.
+  - **Implementation**: Side-by-side layout in `TokenAmountInput` (`components/token-amount-input.tsx:117-188`)
+  - **Rationale**: Users need to see both token and USD values simultaneously to make informed decisions
+  - **Source**: Coinbase displays fiat and crypto amounts side-by-side in their trading interface
+
 - **Skeleton Loaders**: Loading states that match the final content shape prevent layout shift and provide smooth loading experience. Users see the structure before content loads.
+  - **Implementation**: Skeleton components in `TokenAmountInput` (`components/token-amount-input.tsx:120-121, 144-145`)
+  - **Rationale**: Prevents jarring layout shifts and communicates loading state clearly
+  - **Source**: Coinbase uses skeleton loaders throughout their interface for price data and token lists
 
 #### 3. **Robinhood Patterns**
 
+**Reference**: [Robinhood Trading Interface](https://robinhood.com/us/en/support/articles/trading/)
+
 - **Clean Number Formatting**: Commas and appropriate decimal places (e.g., "1,234.56") make large numbers readable. Formatting adapts based on value size.
+  - **Implementation**: Number formatting in `lib/utils/format.ts` with `formatUSDAmount` function
+  - **Rationale**: Large numbers are hard to read without formatting; commas improve readability
+  - **Source**: Robinhood displays all monetary values with proper comma formatting
+
 - **Smart Abbreviations**: Large USD amounts automatically abbreviated (1.5M, 1.5B, 1.5T) to keep the interface clean and readable.
+  - **Implementation**: `formatUSDAmount` function abbreviates values >= 1M (`lib/utils/format.ts:15-45`)
+  - **Rationale**: Keeps UI clean while maintaining precision for large values
+  - **Source**: Robinhood abbreviates large portfolio values (e.g., "$1.5M" instead of "$1,500,000")
+
 - **Subtle Hover States**: Scale transforms on interactive elements (flip button, clear button) provide tactile feedback without being distracting.
-- **Focus Ring Animations**: Smooth ring animations on input focus create clear visual feedback for keyboard navigation and accessibility.
+  - **Implementation**: Framer Motion hover animations (`components/swap-interface.tsx:317-319`)
+  - **Rationale**: Provides visual feedback without being intrusive
+  - **Source**: Robinhood uses subtle scale transforms on interactive elements
+
 
 ### Component Architecture
 
@@ -446,7 +481,7 @@ The application uses the Funkit API for token data and pricing:
 
 ## 📝 Assumptions & Trade-offs
 
-This section documents key design decisions, their rationale, and the trade-offs involved.
+This section documents key design decisions, their rationale, and the trade-offs involved. For a comprehensive checklist of edge cases and error states, see the [Edge State Checklist](./docs/EDGE_STATE_CHECKLIST.md).
 
 ### Assumptions
 

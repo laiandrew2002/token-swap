@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getTokenPrice, type GetPriceParams } from "@/lib/api/prices";
+import { getTokenPrice } from "@/lib/api/prices";
 import { Token } from "@/types";
 
 export interface UseTokenPricesParams {
