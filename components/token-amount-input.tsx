@@ -47,7 +47,6 @@ export function TokenAmountInput({
   const handleTokenAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cleaned = parseNumericInput(e.target.value);
     onTokenAmountChange(cleaned);
-    // Parent component handles USD conversion
   };
 
   // Handle USD amount input
@@ -56,7 +55,6 @@ export function TokenAmountInput({
     let cleaned = e.target.value.replace(/[$,]/g, "");
     cleaned = parseNumericInput(cleaned);
     onUsdAmountChange(cleaned);
-    // Parent component handles token conversion
   };
 
   const handleClear = () => {
@@ -94,8 +92,13 @@ export function TokenAmountInput({
       />
 
       {error && (
-        <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 flex items-start gap-3">
-          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+        <div
+          className="rounded-md border border-destructive/50 bg-destructive/10 p-3 flex items-start gap-3"
+          role="alert"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" aria-hidden="true" />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-destructive">
               {getUserFriendlyError(error)}
@@ -120,22 +123,36 @@ export function TokenAmountInput({
           {isLoading ? (
             <Skeleton className="h-12 w-full" />
           ) : (
-            <Input
-              ref={tokenInputRef}
-              type="text"
-              inputMode="decimal"
-              value={displayTokenAmount}
-              onChange={handleTokenAmountChange}
-              onFocus={() => setIsTokenFocused(true)}
-              onBlur={() => setIsTokenFocused(false)}
-              placeholder="0.00"
-              disabled={!token}
-              className={cn(
-                "h-12 text-2xl font-semibold px-4 w-full",
-                isTokenFocused && "ring-2 ring-primary ring-offset-2",
-                !token && "opacity-50 cursor-not-allowed"
-              )}
-            />
+            <div className="relative">
+              <Input
+                ref={tokenInputRef}
+                type="text"
+                inputMode="decimal"
+                value={displayTokenAmount}
+                onChange={handleTokenAmountChange}
+                onFocus={() => setIsTokenFocused(true)}
+                onBlur={() => setIsTokenFocused(false)}
+                placeholder="0.00"
+                disabled={!token}
+                aria-label={`${label} token amount`}
+                aria-describedby={token ? `${label}-token-helper` : undefined}
+                className={cn(
+                  "h-12 text-2xl font-semibold px-4 w-full",
+                  isTokenFocused && "ring-2 ring-primary ring-offset-2",
+                  !token && "opacity-50 cursor-not-allowed"
+                )}
+              />
+              <span
+                id={`${label}-token-helper`}
+                className="sr-only"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {displayTokenAmount && token
+                  ? `${displayTokenAmount} ${token.symbol}`
+                  : ""}
+              </span>
+            </div>
           )}
         </div>
 
@@ -147,13 +164,20 @@ export function TokenAmountInput({
             <div
               className={cn(
                 "h-12 px-4 flex items-center justify-center rounded-md border relative",
-                "w-full sm:w-auto text-right",
-                isUsdFocused
-                  ? "bg-background ring-2 ring-primary ring-offset-2"
-                  : "bg-muted/50"
+                "w-full sm:w-auto text-right"
               )}
+              aria-live="polite"
+              aria-atomic="true"
             >
-              <span className="text-muted-foreground mr-1">$</span>
+              <div
+                className={cn(
+                  "absolute inset-0 rounded-md",
+                  isUsdFocused
+                    ? "bg-background ring-2 ring-primary ring-offset-2"
+                    : "bg-muted/50"
+                )}
+              />
+              <span className="text-muted-foreground mr-1 relative z-10">$</span>
               <Input
                 ref={usdInputRef}
                 type="text"
@@ -164,19 +188,29 @@ export function TokenAmountInput({
                 onBlur={() => setIsUsdFocused(false)}
                 placeholder="0.00"
                 disabled={!token}
+                aria-label={`${label} USD amount`}
                 className={cn(
-                  "h-auto text-lg font-medium px-0 border-0 bg-transparent text-right flex-1 pr-6",
+                  "h-auto text-lg font-medium px-0 border-0 bg-transparent text-right flex-1 pr-6 relative z-10",
                   "focus-visible:ring-0 focus-visible:ring-offset-0",
                   !token && "opacity-50 cursor-not-allowed"
                 )}
               />
+              <span
+                className="sr-only"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {!isUsdFocused && formattedUsd
+                  ? `USD amount: $${formattedUsd}`
+                  : ""}
+              </span>
               {usdAmount && (
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
                   onClick={handleClear}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-accent"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 hover:bg-accent z-10"
                   aria-label="Clear input"
                 >
                   <X className="h-4 w-4" />

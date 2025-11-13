@@ -262,7 +262,7 @@ export function SwapInterface() {
     <div className="w-full max-w-2xl mx-auto p-4 sm:p-6">
       <Card className="w-full border-none shadow-none">
         <CardHeader>
-          <CardTitle className="text-4xl font-bold text-center bg-linear-to-r from-primary to-primary-foreground text-transparent bg-clip-text">
+          <CardTitle className="text-4xl font-bold text-center text-blue-500">
             Token Swap Calculator
           </CardTitle>
         </CardHeader>
@@ -298,8 +298,13 @@ export function SwapInterface() {
             <div className="relative flex flex-col items-center gap-2">
               {/* Rate */}
               {sourceToken && targetToken && exchangeRate && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                  <TrendingUp className="h-4 w-4 text-primary shrink-0" />
+                <div
+                  className="flex items-center gap-2 text-sm text-muted-foreground mb-2"
+                  aria-live="polite"
+                  aria-atomic="true"
+                  role="status"
+                >
+                  <TrendingUp className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
                   <span className="font-medium">
                     1 {sourceToken.symbol} = {prices.rate?.toFixed(6)}{" "}
                     {targetToken.symbol}
