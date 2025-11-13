@@ -9,7 +9,7 @@ import { ArrowUpDown, TrendingUp } from "lucide-react";
 import { useTokenInfo } from "@/lib/hooks/use-token-info";
 import { useTokenPrices } from "@/lib/hooks/use-token-prices";
 import { useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { formatTokenAmount } from "@/lib/utils/format";
 
 export function SwapInterface() {
@@ -25,6 +25,7 @@ export function SwapInterface() {
   const lastEditedRef = useRef<"source" | "target" | null>(null);
 
   const queryClient = useQueryClient();
+  const shouldReduceMotion = useReducedMotion();
 
   // Fetch token info for source token (to get address)
   const sourceTokenInfo = useTokenInfo(
@@ -314,8 +315,9 @@ export function SwapInterface() {
 
               {/* Flip Button */}
               <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={shouldReduceMotion ? {} : { scale: 1.1 }}
+                whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
+                transition={shouldReduceMotion ? { duration: 0 } : undefined}
               >
                 <Button
                   type="button"

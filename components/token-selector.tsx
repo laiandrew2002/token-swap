@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Token, ChainInfo } from "@/types";
+import { Token } from "@/types";
 import { SUPPORTED_TOKENS, getChainInfo } from "@/lib/config/tokens";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ChevronDown, Search, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface TokenSelectorProps {
@@ -28,6 +28,7 @@ export function TokenSelector({
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const shouldReduceMotion = useReducedMotion();
   const listRef = useRef<HTMLDivElement>(null);
 
   const filteredTokens = SUPPORTED_TOKENS.filter((token) => {
@@ -175,10 +176,10 @@ export function TokenSelector({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -10 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.2 }}
             className="absolute z-50 w-full mt-2"
           >
             <Card className="p-2 shadow-lg border">
